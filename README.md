@@ -1,5 +1,8 @@
 # VM Server Setup
 
+Here is a setup guide for adding ssh-authentification, disabling authentification with credentials, as well as installing nginx and connecting to your personal Git-Account.
+After completing this guide, you should be able to connect to a custom nginx HTML-Template.
+
 ## Table of Contents
 
 - [1. SSH Key Generation and Server Access](#1-ssh-key-generation-and-server-access)
@@ -26,7 +29,7 @@
 
 On your local machine, generate a new SSH key:
 ```bash
-ssh-keygen -t ed25519 
+ssh-keygen -t ed25519 -f ~/.ssh/vm_server_ed25519
 ```
 
 This creates a key pair at `~/.ssh/vm_server_ed25519` and `~/.ssh/vm_server_ed25519.pub`.
@@ -35,15 +38,14 @@ This creates a key pair at `~/.ssh/vm_server_ed25519` and `~/.ssh/vm_server_ed25
 
 Create a config file in your SSH folder for easier connections:
 ```bash
-touch ~/.ssh/config
 nano ~/.ssh/config
 ```
 
 Add the following configuration:
 ```bash
 Host vm_server
-    HostName 123.45.67.89   #enter your real IP
-    User deploy_user        #enter your username
+    HostName <123.45.67.89>   #enter your real IP
+    User <deploy_user>        #enter your username
     IdentityFile ~/.ssh/vm_server_ed25519
 ```
 
@@ -56,7 +58,7 @@ cat ~/.ssh/vm_server_ed25519.pub
 
 Connect to the VM server using password authentication:
 ```bash
-ssh deploy_user@192.168.1.100
+ssh <deploy_user@192.168.1.100>
 ```
 
 Agree to the fingerprint and enter your password. Once connected to the server, append your public key to the authorized keys:
@@ -94,6 +96,16 @@ PasswordAuthentication no
 ```
 
 Save and exit the editor (`Ctrl+X`, then `Enter`, then `Enter`).
+
+Check config before restarting the server
+```bash
+sudo sshd -t
+```
+
+Restart the SSH service to apply changes:
+```bash
+sudo systemctl restart ssh.service
+```
 
 Restart the SSH service to apply changes:
 ```bash
